@@ -18,12 +18,14 @@ public class EnterpriseUser {
     private String country;
     private String region;
 
-    @OneToOne(fetch = FetchType.LAZY)
+    @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
     @JoinColumn(name = "account_id")
     private User user;
 
     @Builder
-    public EnterpriseUser(String name, String country, String region, User user) {
+
+    public EnterpriseUser(Long id, String name, String country, String region, User user) {
+        this.id = id;
         this.name = name;
         this.country = country;
         this.region = region;

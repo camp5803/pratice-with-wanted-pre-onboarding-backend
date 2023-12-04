@@ -20,7 +20,7 @@ public class Recruitment {
     private String content;
     private String techStack;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     @JoinColumn(name = "enterprise_id")
     private EnterpriseUser enterpriseUser;
 

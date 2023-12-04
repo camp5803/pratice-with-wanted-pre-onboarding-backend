@@ -16,12 +16,13 @@ public class PersonalUser {
     private Long id;
     private String name;
 
-    @OneToOne(fetch = FetchType.LAZY)
+    @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
     @JoinColumn(name = "account_id")
     private User user;
 
     @Builder
-    public PersonalUser(String name, User user) {
+    public PersonalUser(Long id, String name, User user) {
+        this.id = id;
         this.name = name;
         this.user = user;
     }
