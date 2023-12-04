@@ -25,7 +25,8 @@ public class Recruitment {
     private EnterpriseUser enterpriseUser;
 
     @Builder
-    public Recruitment(String position, Long guarantee, String content, String techStack, EnterpriseUser enterpriseUser) {
+    public Recruitment(Long id, String position, Long guarantee, String content, String techStack, EnterpriseUser enterpriseUser) {
+        this.id = id;
         this.position = position;
         this.guarantee = guarantee;
         this.content = content;
