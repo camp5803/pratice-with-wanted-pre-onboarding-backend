@@ -16,6 +16,15 @@ public interface RecruitmentRepository extends JpaRepository<Recruitment, Long> 
     Optional<Recruitment> findById(@NonNull Long id);
 
     @NonNull
+    Optional<Recruitment> findByPositionContaining(@NonNull String title);
+
+    @NonNull
+    Optional<Recruitment> findByTechStackContaining(@NonNull String techStack);
+
+    @NonNull
+    Optional<Recruitment> findByContentContaining(@NonNull String content);
+
+    @NonNull
     List<Recruitment> findAll();
 
     void deleteById(@NonNull Long id);

@@ -13,4 +13,7 @@ public interface EnterpriseUserRepository extends JpaRepository<EnterpriseUser, 
 
     @NonNull
     Optional<EnterpriseUser> findById(@NonNull Long id);
+
+    @NonNull
+    Optional<EnterpriseUser> findByNameContaining(@NonNull String email);
 }
