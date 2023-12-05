@@ -2,28 +2,37 @@ package preonboarding.wanted.backend.domain.user.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.*;
 import preonboarding.wanted.backend.domain.user.dto.EnterpriseUserDto;
 import preonboarding.wanted.backend.domain.user.dto.PersonalUserDto;
 import preonboarding.wanted.backend.domain.user.dto.UserDto;
 import preonboarding.wanted.backend.domain.user.model.EnterpriseUser;
 import preonboarding.wanted.backend.domain.user.model.PersonalUser;
+import preonboarding.wanted.backend.domain.user.model.User;
 import preonboarding.wanted.backend.domain.user.service.EnterpriseUserService;
 import preonboarding.wanted.backend.domain.user.service.PersonalUserService;
+import preonboarding.wanted.backend.domain.user.service.UserService;
+
+import java.util.Optional;
 
 @Controller
 public class UserController {
 
+    private final UserService userService;
     private final PersonalUserService personalUserService;
     private final EnterpriseUserService enterpriseUserService;
 
     @Autowired
-    public UserController(PersonalUserService personalUserService, EnterpriseUserService enterpriseUserService) {
+    public UserController(UserService userService, PersonalUserService personalUserService, EnterpriseUserService enterpriseUserService) {
+        this.userService = userService;
         this.personalUserService = personalUserService;
         this.enterpriseUserService = enterpriseUserService;
+    }
+
+    @PostMapping("/login")
+    @ResponseBody
+    public User login(@RequestParam("email") String email, @RequestParam("password") String password) {
+        return userService.login(email, password);
     }
 
     @PostMapping("/user/personal")
