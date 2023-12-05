@@ -4,6 +4,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.lang.NonNull;
 import preonboarding.wanted.backend.domain.recruitment.model.Recruitment;
 
+import java.util.List;
 import java.util.Optional;
 
 public interface RecruitmentRepository extends JpaRepository<Recruitment, Long> {
@@ -13,6 +14,9 @@ public interface RecruitmentRepository extends JpaRepository<Recruitment, Long> 
 
     @NonNull
     Optional<Recruitment> findById(@NonNull Long id);
+
+    @NonNull
+    List<Recruitment> findAll();
 
     void deleteById(@NonNull Long id);
 }
