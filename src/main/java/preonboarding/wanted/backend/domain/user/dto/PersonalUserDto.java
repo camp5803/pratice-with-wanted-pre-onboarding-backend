@@ -11,5 +11,5 @@ public class PersonalUserDto {
 
     private Long id;
     @NonNull private String name;
-    @NonNull private User user;
+    private User user;
 }

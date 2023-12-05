@@ -13,5 +13,5 @@ public class EnterpriseUserDto {
     @NonNull private String name;
     @NonNull private String country;
     @NonNull private String region;
-    @NonNull private User user;
+    private User user;
 }
