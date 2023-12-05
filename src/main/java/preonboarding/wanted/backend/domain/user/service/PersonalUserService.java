@@ -1,6 +1,7 @@
 package preonboarding.wanted.backend.domain.user.service;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import preonboarding.wanted.backend.domain.user.dto.PersonalUserDto;
@@ -16,18 +17,24 @@ import java.util.Optional;
 @Transactional
 public class PersonalUserService {
 
+    private final PasswordEncoder passwordEncoder;
     private final UserRepository userRepository;
     private final PersonalUserRepository personalUserRepository;
 
     @Autowired
-    public PersonalUserService(PersonalUserRepository personalUserRepository, UserRepository userRepository) {
-        this.personalUserRepository = personalUserRepository;
+    public PersonalUserService(PasswordEncoder passwordEncoder, UserRepository userRepository, PersonalUserRepository personalUserRepository) {
+        this.passwordEncoder = passwordEncoder;
         this.userRepository = userRepository;
+        this.personalUserRepository = personalUserRepository;
     }
 
     public PersonalUser join(UserDto userDto, PersonalUserDto personalUserDto) {
+       User user = User.builder()
+                .email(userDto.email())
+                .password(passwordEncoder.encode(userDto.password()))
+                .build();
+
         validateDuplicateUser(userDto.toEntity());
-        User user = userRepository.save(userDto.toEntity());
         PersonalUser personalUser = new PersonalUser(null, personalUserDto.getName(), user);
         return personalUserRepository.save(personalUser);
     }
