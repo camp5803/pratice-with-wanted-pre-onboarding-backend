@@ -3,7 +3,7 @@ package preonboarding.wanted.backend.domain.recruitment.dto;
 import lombok.Builder;
 import org.springframework.lang.NonNull;
 import preonboarding.wanted.backend.domain.recruitment.model.Recruitment;
-import preonboarding.wanted.backend.domain.user.model.EnterpriseUser;
+import preonboarding.wanted.backend.domain.user.dto.EnterpriseUserDto;
 
 @Builder
 public record RecruitmentDto (
@@ -13,10 +13,10 @@ public record RecruitmentDto (
         @NonNull Long guarantee,
         @NonNull String content,
         @NonNull String techStack,
-        EnterpriseUser enterpriseUser
+        EnterpriseUserDto enterpriseUserDto
 ) {
-    public static RecruitmentDto of(Long id, @NonNull String position, @NonNull Long guarantee, @NonNull String content, @NonNull String techStack, EnterpriseUser enterpriseUser) {
-        return new RecruitmentDto(id, position, guarantee, content, techStack, enterpriseUser);
+    public static RecruitmentDto of(Long id, @NonNull String position, @NonNull Long guarantee, @NonNull String content, @NonNull String techStack, EnterpriseUserDto enterpriseUserDto) {
+        return new RecruitmentDto(id, position, guarantee, content, techStack, enterpriseUserDto);
     }
 
     public static RecruitmentDto from(@NonNull Recruitment recruitment) {
@@ -26,7 +26,7 @@ public record RecruitmentDto (
                 recruitment.getGuarantee(),
                 recruitment.getContent(),
                 recruitment.getTechStack(),
-                recruitment.getEnterpriseUser()
+                EnterpriseUserDto.from(recruitment.getEnterpriseUser())
         );
     }
 
@@ -37,7 +37,7 @@ public record RecruitmentDto (
                 guarantee,
                 content,
                 techStack,
-                enterpriseUser
+                enterpriseUserDto.toEntity()
         );
     }
 }
