@@ -7,6 +7,7 @@ import org.springframework.web.bind.annotation.*;
 import preonboarding.wanted.backend.domain.recruitment.dto.RecruitmentDto;
 import preonboarding.wanted.backend.domain.recruitment.model.Recruitment;
 import preonboarding.wanted.backend.domain.recruitment.service.RecruitmentService;
+import preonboarding.wanted.backend.domain.user.dto.EnterpriseUserDto;
 import preonboarding.wanted.backend.domain.user.model.EnterpriseUser;
 import preonboarding.wanted.backend.domain.user.service.EnterpriseUserService;
 
@@ -41,7 +42,7 @@ public class RecruitmentController {
     @ResponseBody
     public List<Recruitment> searchRecruitment(@RequestParam("query") String query) {
         return recruitmentService.searchRecruitment(query);
-    }
+    } // 안됨
 
     @PostMapping("/recruitment")
     @ResponseBody
@@ -62,7 +63,7 @@ public class RecruitmentController {
                 .guarantee(guarantee)
                 .content(content)
                 .techStack(techStack)
-                .enterpriseUser(enterpriseUser)
+                .enterpriseUserDto(EnterpriseUserDto.from(enterpriseUser))
                 .build();
 
         return recruitmentService.createRecruitment(recruitmentDto);
@@ -93,5 +94,5 @@ public class RecruitmentController {
     @ResponseBody
     public void deleteRecruitment(@PathVariable Long id) {
         recruitmentService.deleteRecruitment(id);
-    }
+    } // 지금 안됨
 }

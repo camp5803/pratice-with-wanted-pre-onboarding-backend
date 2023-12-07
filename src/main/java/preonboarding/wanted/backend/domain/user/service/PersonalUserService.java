@@ -35,7 +35,7 @@ public class PersonalUserService {
                 .build();
 
         validateDuplicateUser(userDto.toEntity());
-        PersonalUser personalUser = new PersonalUser(null, personalUserDto.getName(), user);
+        PersonalUser personalUser = new PersonalUser(null, personalUserDto.name(), user);
         return personalUserRepository.save(personalUser);
     }
 

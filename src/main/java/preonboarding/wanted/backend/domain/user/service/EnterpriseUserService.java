@@ -35,7 +35,7 @@ public class EnterpriseUserService {
                 .build();
 
         validateDuplicateUser(userDto.toEntity());
-        EnterpriseUser enterpriseUser = new EnterpriseUser(null, enterpriseUserDto.getName(), enterpriseUserDto.getCountry(), enterpriseUserDto.getRegion(), user);
+        EnterpriseUser enterpriseUser = new EnterpriseUser(null, enterpriseUserDto.name(), enterpriseUserDto.country(), enterpriseUserDto.region(), user);
         return enterpriseUserRepository.save(enterpriseUser);
     }
 
