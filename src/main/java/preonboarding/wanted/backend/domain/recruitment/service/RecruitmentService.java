@@ -3,6 +3,7 @@ package preonboarding.wanted.backend.domain.recruitment.service;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import preonboarding.wanted.backend.domain.recruitment.dto.DetailRecruitmentDto;
 import preonboarding.wanted.backend.domain.recruitment.dto.RecruitmentDto;
 import preonboarding.wanted.backend.domain.recruitment.dto.RecruitmentResponseDto;
 import preonboarding.wanted.backend.domain.recruitment.model.Recruitment;
@@ -48,10 +49,12 @@ public class RecruitmentService {
         return RecruitmentResponseDto.from(recruitmentRepository.save(modifiedRecruitment.toEntity()));
     }
 
-    public RecruitmentResponseDto getRecruitment(Long id) {
-        return RecruitmentResponseDto.from(
-                recruitmentRepository.findById(id).orElseThrow(() -> new IllegalArgumentException("해당 공고가 없습니다."))
-        );
+    public DetailRecruitmentDto getDetailRecruitment(Long id) {
+        Recruitment recruitment = recruitmentRepository.findById(id)
+                .orElseThrow(() -> new IllegalArgumentException("해당 공고가 없습니다."));
+        EnterpriseUser enterpriseUser = recruitment.getEnterpriseUser();
+        List<Long> recruitmentIds = getRecruitmentIdsByEnterpriseUser(enterpriseUser);
+        return DetailRecruitmentDto.from(recruitment, recruitmentIds);
     }
 
     public List<RecruitmentResponseDto> getRecruitments() {
@@ -80,6 +83,12 @@ public class RecruitmentService {
                 .toList();
 
         return mergeAndDistinctLists(results);
+    }
+
+    private List<Long> getRecruitmentIdsByEnterpriseUser(EnterpriseUser enterpriseUser) {
+        return recruitmentRepository.findByEnterpriseUser(enterpriseUser).stream()
+                .map(Recruitment::getId)
+                .toList();
     }
 
     private <T> List<T> mergeAndDistinctLists(List<List<T>> lists) {

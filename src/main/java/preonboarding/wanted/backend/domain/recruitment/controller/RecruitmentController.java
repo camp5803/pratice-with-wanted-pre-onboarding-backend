@@ -4,6 +4,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
+import preonboarding.wanted.backend.domain.recruitment.dto.DetailRecruitmentDto;
 import preonboarding.wanted.backend.domain.recruitment.dto.RecruitmentDto;
 import preonboarding.wanted.backend.domain.recruitment.dto.RecruitmentResponseDto;
 import preonboarding.wanted.backend.domain.recruitment.service.RecruitmentService;
@@ -34,8 +35,8 @@ public class RecruitmentController {
 
     @GetMapping("/recruitment/{id}")
     @ResponseBody
-    public RecruitmentResponseDto getRecruitment(@PathVariable Long id) {
-        return recruitmentService.getRecruitment(id);
+    public DetailRecruitmentDto getRecruitment(@PathVariable Long id) {
+        return recruitmentService.getDetailRecruitment(id);
     }
 
     @GetMapping("/recruitment/search")
