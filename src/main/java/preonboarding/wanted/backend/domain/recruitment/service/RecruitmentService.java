@@ -4,6 +4,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import preonboarding.wanted.backend.domain.recruitment.dto.RecruitmentDto;
+import preonboarding.wanted.backend.domain.recruitment.dto.RecruitmentResponseDto;
 import preonboarding.wanted.backend.domain.recruitment.model.Recruitment;
 import preonboarding.wanted.backend.domain.recruitment.repository.RecruitmentRepository;
 import preonboarding.wanted.backend.domain.user.model.EnterpriseUser;
@@ -27,21 +28,33 @@ public class RecruitmentService {
         this.recruitmentRepository = recruitmentRepository;
     }
 
-    public RecruitmentDto createRecruitment(RecruitmentDto recruitmentDto) {
-        return RecruitmentDto.from(recruitmentRepository.save(recruitmentDto.toEntity()));
+    public RecruitmentResponseDto createRecruitment(RecruitmentDto recruitmentDto) {
+        return RecruitmentResponseDto.from(recruitmentRepository.save(recruitmentDto.toEntity()));
     }
 
-    public RecruitmentDto updateRecruitment(RecruitmentDto recruitmentDto) {
-        return RecruitmentDto.from(recruitmentRepository.save(recruitmentDto.toEntity()));
+    public RecruitmentResponseDto updateRecruitment(Long id, RecruitmentDto recruitmentDto) {
+        RecruitmentDto originalRecruitment = RecruitmentDto.from(recruitmentRepository.findById(id)
+                .orElseThrow(() -> new IllegalArgumentException("해당 공고가 없습니다.")));
+
+        RecruitmentDto modifiedRecruitment = RecruitmentDto.builder()
+                .id(id)
+                .position(recruitmentDto.position() != null ? recruitmentDto.position() : originalRecruitment.position())
+                .guarantee(recruitmentDto.guarantee() != null ? recruitmentDto.guarantee() : originalRecruitment.guarantee())
+                .content(recruitmentDto.content() != null ? recruitmentDto.content() : originalRecruitment.content())
+                .techStack(recruitmentDto.techStack() != null ? recruitmentDto.techStack() : originalRecruitment.techStack())
+                .enterpriseUserDto(originalRecruitment.enterpriseUserDto())
+                .build();
+
+        return RecruitmentResponseDto.from(recruitmentRepository.save(modifiedRecruitment.toEntity()));
     }
 
-    public RecruitmentDto getRecruitment(Long id) {
-        return RecruitmentDto.from(
+    public RecruitmentResponseDto getRecruitment(Long id) {
+        return RecruitmentResponseDto.from(
                 recruitmentRepository.findById(id).orElseThrow(() -> new IllegalArgumentException("해당 공고가 없습니다."))
         );
     }
 
-    public List<RecruitmentDto> getRecruitments() {
+    public List<RecruitmentResponseDto> getRecruitments() {
         return convertToDto(recruitmentRepository.findAll());
     }
 
@@ -52,7 +65,7 @@ public class RecruitmentService {
         recruitmentRepository.deleteById(id);
     }
 
-    public List<RecruitmentDto> searchRecruitment(String query) {
+    public List<RecruitmentResponseDto> searchRecruitment(String query) {
         Optional<EnterpriseUser> enterpriseInformation = enterpriseUserRepository.findByNameContaining(query);
         List<Recruitment> byName = enterpriseInformation
                 .map(recruitmentRepository::findByEnterpriseUser)
@@ -62,7 +75,7 @@ public class RecruitmentService {
         List<Recruitment> byContent = recruitmentRepository.findByContentContaining(query);
 
         // List들을 통합하여 아래에서 중복 제거
-        List<List<RecruitmentDto>> results = Stream.of(byName, byPosition, byTechStack, byContent)
+        List<List<RecruitmentResponseDto>> results = Stream.of(byName, byPosition, byTechStack, byContent)
                 .map(this::convertToDto)
                 .toList();
 
@@ -76,9 +89,9 @@ public class RecruitmentService {
                 .toList();
     }
 
-    private List<RecruitmentDto> convertToDto(List<Recruitment> recruitments) {
+    private List<RecruitmentResponseDto> convertToDto(List<Recruitment> recruitments) {
         return recruitments.stream()
-                .map(RecruitmentDto::from)
+                .map(RecruitmentResponseDto::from)
                 .toList();
     }
 

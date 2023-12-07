@@ -5,6 +5,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 import preonboarding.wanted.backend.domain.recruitment.dto.RecruitmentDto;
+import preonboarding.wanted.backend.domain.recruitment.dto.RecruitmentResponseDto;
 import preonboarding.wanted.backend.domain.recruitment.service.RecruitmentService;
 import preonboarding.wanted.backend.domain.user.dto.EnterpriseUserDto;
 import preonboarding.wanted.backend.domain.user.model.EnterpriseUser;
@@ -27,26 +28,26 @@ public class RecruitmentController {
 
     @GetMapping("/recruitment")
     @ResponseBody
-    public List<RecruitmentDto> getRecruitments() {
+    public List<RecruitmentResponseDto> getRecruitments() {
         return recruitmentService.getRecruitments();
     }
 
     @GetMapping("/recruitment/{id}")
     @ResponseBody
-    public RecruitmentDto getRecruitment(@PathVariable Long id) {
+    public RecruitmentResponseDto getRecruitment(@PathVariable Long id) {
         return recruitmentService.getRecruitment(id);
     }
 
     @GetMapping("/recruitment/search")
     @ResponseBody
-    public List<RecruitmentDto> searchRecruitment(@RequestParam("query") String query) {
+    public List<RecruitmentResponseDto> searchRecruitment(@RequestParam("query") String query) {
         return recruitmentService.searchRecruitment(query);
     }
 
     @PostMapping("/recruitment")
     @ResponseBody
     @Transactional
-    public RecruitmentDto createRecruitment(
+    public RecruitmentResponseDto createRecruitment(
             @RequestParam("enterpriseUserId") Long enterpriseUserId,
             @RequestParam("position") String position,
             @RequestParam("guarantee") Long guarantee,
@@ -70,23 +71,20 @@ public class RecruitmentController {
 
     @PatchMapping("/recruitment/{id}")
     @ResponseBody
-    public RecruitmentDto updateRecruitment(
+    public RecruitmentResponseDto updateRecruitment(
             @PathVariable Long id,
-            @RequestParam("position") String position,
-            @RequestParam("guarantee") Long guarantee,
-            @RequestParam("content") String content,
-            @RequestParam("techStack") String techStack
+            @RequestParam(value = "position", required = false) String position,
+            @RequestParam(value = "guarantee", required = false) Long guarantee,
+            @RequestParam(value = "content", required = false) String content,
+            @RequestParam(value = "techStack", required = false) String techStack
     ) {
-        RecruitmentDto originalRecruitment = recruitmentService.getRecruitment(id);
-        RecruitmentDto modifiedRecruitment = RecruitmentDto.builder()
+        return recruitmentService.updateRecruitment(id, RecruitmentDto.builder()
                 .id(id)
-                .position(position != null ? position : originalRecruitment.position())
-                .guarantee(guarantee != null ? guarantee : originalRecruitment.guarantee())
-                .content(content != null ? content : originalRecruitment.content())
-                .techStack(techStack != null ? techStack : originalRecruitment.techStack())
-                .build();
-
-        return recruitmentService.updateRecruitment(modifiedRecruitment);
+                .position(position)
+                .guarantee(guarantee)
+                .content(content)
+                .techStack(techStack)
+                .build());
     }
 
     @DeleteMapping("/recruitment/{id}")
