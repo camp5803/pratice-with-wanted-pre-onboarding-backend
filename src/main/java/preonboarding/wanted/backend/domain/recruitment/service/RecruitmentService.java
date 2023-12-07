@@ -9,10 +9,10 @@ import preonboarding.wanted.backend.domain.recruitment.repository.RecruitmentRep
 import preonboarding.wanted.backend.domain.user.model.EnterpriseUser;
 import preonboarding.wanted.backend.domain.user.repository.EnterpriseUserRepository;
 
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Stream;
 
 @Service
 @Transactional
@@ -45,11 +45,14 @@ public class RecruitmentService {
         return convertToDto(recruitmentRepository.findAll());
     }
 
-    public void deleteRecruitment(Long id) {
+    public void deleteRecruitment(Long id) { // 이해 안 됨) 그냥 지워지면 되는거지 왜 꼭 연관을 끊어야 하는지
+        Recruitment recruitment = recruitmentRepository.findById(id)
+                .orElseThrow(() -> new IllegalArgumentException("해당 공고가 없습니다."));
+        disassociateEnterpriseUser(recruitment);
         recruitmentRepository.deleteById(id);
     }
 
-    public List<Recruitment> searchRecruitment(String query) {
+    public List<RecruitmentDto> searchRecruitment(String query) {
         Optional<EnterpriseUser> enterpriseInformation = enterpriseUserRepository.findByNameContaining(query);
         List<Recruitment> byName = enterpriseInformation
                 .map(recruitmentRepository::findByEnterpriseUser)
@@ -59,7 +62,9 @@ public class RecruitmentService {
         List<Recruitment> byContent = recruitmentRepository.findByContentContaining(query);
 
         // List들을 통합하여 아래에서 중복 제거
-        List<List<Recruitment>> results = Arrays.asList(byName, byPosition, byTechStack, byContent);
+        List<List<RecruitmentDto>> results = Stream.of(byName, byPosition, byTechStack, byContent)
+                .map(this::convertToDto)
+                .toList();
 
         return mergeAndDistinctLists(results);
     }
@@ -75,5 +80,16 @@ public class RecruitmentService {
         return recruitments.stream()
                 .map(RecruitmentDto::from)
                 .toList();
+    }
+
+    private void disassociateEnterpriseUser(Recruitment recruitment) {
+        recruitmentRepository.save(Recruitment.builder()
+                .id(recruitment.getId())
+                .enterpriseUser(null)
+                .position(recruitment.getPosition())
+                .guarantee(recruitment.getGuarantee())
+                .content(recruitment.getContent())
+                .techStack(recruitment.getTechStack())
+                .build());
     }
 }
