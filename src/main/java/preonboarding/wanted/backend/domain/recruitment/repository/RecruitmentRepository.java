@@ -3,6 +3,7 @@ package preonboarding.wanted.backend.domain.recruitment.repository;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.lang.NonNull;
 import preonboarding.wanted.backend.domain.recruitment.model.Recruitment;
+import preonboarding.wanted.backend.domain.user.model.EnterpriseUser;
 
 import java.util.List;
 import java.util.Optional;
@@ -16,13 +17,16 @@ public interface RecruitmentRepository extends JpaRepository<Recruitment, Long> 
     Optional<Recruitment> findById(@NonNull Long id);
 
     @NonNull
-    Optional<Recruitment> findByPositionContaining(@NonNull String title);
+    List<Recruitment> findByEnterpriseUser(@NonNull EnterpriseUser enterpriseUser);
 
     @NonNull
-    Optional<Recruitment> findByTechStackContaining(@NonNull String techStack);
+    List<Recruitment> findByPositionContaining(@NonNull String title);
 
     @NonNull
-    Optional<Recruitment> findByContentContaining(@NonNull String content);
+    List<Recruitment> findByTechStackContaining(@NonNull String techStack);
+
+    @NonNull
+    List<Recruitment> findByContentContaining(@NonNull String content);
 
     @NonNull
     List<Recruitment> findAll();
