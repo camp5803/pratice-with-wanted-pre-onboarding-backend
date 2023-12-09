@@ -4,9 +4,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
+import preonboarding.wanted.backend.domain.recruitment.dto.ApplicationDto;
 import preonboarding.wanted.backend.domain.recruitment.dto.DetailRecruitmentDto;
 import preonboarding.wanted.backend.domain.recruitment.dto.RecruitmentDto;
 import preonboarding.wanted.backend.domain.recruitment.dto.RecruitmentResponseDto;
+import preonboarding.wanted.backend.domain.recruitment.service.ApplicationService;
 import preonboarding.wanted.backend.domain.recruitment.service.RecruitmentService;
 import preonboarding.wanted.backend.domain.user.dto.EnterpriseUserDto;
 import preonboarding.wanted.backend.domain.user.model.EnterpriseUser;
@@ -18,11 +20,13 @@ import java.util.List;
 @Transactional
 public class RecruitmentController {
 
+    private final ApplicationService applicationService;
     private final RecruitmentService recruitmentService;
     private final EnterpriseUserService enterpriseUserService;
 
     @Autowired
-    public RecruitmentController(RecruitmentService recruitmentService, EnterpriseUserService enterpriseUserService) {
+    public RecruitmentController(ApplicationService applicationService, RecruitmentService recruitmentService, EnterpriseUserService enterpriseUserService) {
+        this.applicationService = applicationService;
         this.recruitmentService = recruitmentService;
         this.enterpriseUserService = enterpriseUserService;
     }
@@ -68,6 +72,13 @@ public class RecruitmentController {
                 .build();
 
         return recruitmentService.createRecruitment(recruitmentDto);
+    }
+
+    @PostMapping("/recruitment/{id}/apply")
+    @ResponseBody
+    @Transactional
+    public void applyRecruitment(@PathVariable Long id, @RequestParam("accountId") Long accountId) {
+        applicationService.apply(ApplicationDto.of(id, accountId));
     }
 
     @PatchMapping("/recruitment/{id}")
